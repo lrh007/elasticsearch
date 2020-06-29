@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>elastisearch</title>
+    <link rel="stylesheet" href="/layui/css/layui.css"  media="all">
+    <script src="/layui/layui.js" charset="utf-8"></script>
+    <script src="/jquery/jquery.3.5.1.js" charset="utf-8"></script>
+</head>
+<body>
+<div style="text-align: center;margin-top: 30px">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="text" name="keyword" id="keyword" placeholder="请输入关键字" style="width:400px;height:30px">
+                <button class="layui-btn" id="search" onclick="search();">搜索</button>
+            </div>
+        </div>
+</div>
+<div style="text-align: center;width:90%;margin:0 auto">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;"/>
+    <div style="overflow-y: auto;height: 500px">
+        <ul class="flow-default" id="LAY_demo1"></ul>
+
+
+    </div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;"/>
+    <div id="demo1" style="text-align: center"></div>
+
+
+</div>
+<script>
+
+    function search() {
+        const keyword = $("#keyword").val();
+        const url = "http://localhost:8080/search/" + keyword + "/1/1000";
+        $.get(url,function(data,status){
+            if("success" === status){
+                $("#LAY_demo1").empty();
+                for (let i = 0; i < data.length; i++) {
+                    $("#LAY_demo1").append('<li style="float: left">' +
+                        '<div style="width:250px;margin-top: 50px;margin-left: 60px">' +
+                        '<img src="'+data[i].img+'"><br>' +
+                        '<span style="font-size:20px;color:red;text-align: left">'+data[i].price+'</span><br>' +
+                        '<span style="font-size: 13px">'+data[i].title+'</span></div></li>');
+                }
+            }
+        });
+
+    }
+
+    //初始化分页数据
+    var zys = '';
+    function toPage(curr) {
+        $.ajax({
+            type: "get",
+            async: false,
+            url: "http://localhost:8080/search/"+$("#keyword").val()+"/"+curr+"/10",
+            //后台数据处理-下面有具体实现
+            data: {},
+            success: function (res) {
+                zys = 10;
+                console.log(res);
+            }
+        });
+    }
+    /*layui.use(['laypage', 'layer'], function() {
+        var laypage = layui.laypage
+            , layer = layui.layer;
+
+        //总页数大于页码总数
+        laypage.render({
+            elem: 'demo1'
+            ,count: 10 //数据总数
+            ,jump: function(obj,first){
+                console.log(obj);
+                //obj包含了当前分页的所有参数，比如：
+                console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                console.log(obj.limit); //得到每页显示的条数
+                for(let i = 0; i < 6; i++){
+                    $("#LAY_demo1").append('<li style="float: left"><img src="/images/1.jpg?"></li>');
+                }
+                //首次不执行
+                if(!first){
+                    //do something
+                }
+            }
+        });
+    });*/
+
+</script>
+</body>
+</html>
